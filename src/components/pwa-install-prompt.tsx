@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Download, Share } from 'lucide-react'
 
 import { Button } from './ui/button'
@@ -11,7 +11,7 @@ type DeferredInstallEvent = Event & {
 const DISMISSED_INSTALL_PROMPT_KEY = 'mvp-pwa-install-prompt-dismissed'
 
 function isIos() {
-  return /iPad|iPhone|iPod/.test(navigator.userAgent)
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
 }
 
 function isStandalone() {
@@ -37,6 +37,8 @@ function dismissPrompt() {
 export function PwaInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<DeferredInstallEvent | null>(null)
   const [isDismissed, setIsDismissed] = useState(hasDismissedPrompt)
+  const [isInstalling, setIsInstalling] = useState(false)
+  const isInstallingRef = useRef(false)
   const showIosInstructions = !isDismissed && !isStandalone() && isIos()
 
   useEffect(() => {
@@ -57,11 +59,22 @@ export function PwaInstallPrompt() {
   }
 
   const install = async () => {
-    if (!deferredPrompt) return
+    if (!deferredPrompt || isInstallingRef.current) return
 
-    await deferredPrompt.prompt()
-    await deferredPrompt.userChoice
-    chooseLater()
+    const prompt = deferredPrompt
+    isInstallingRef.current = true
+    setIsInstalling(true)
+    setDeferredPrompt(null)
+
+    try {
+      await prompt.prompt()
+      await prompt.userChoice
+      chooseLater()
+    } catch {
+      isInstallingRef.current = false
+      setIsInstalling(false)
+      setDeferredPrompt(prompt)
+    }
   }
 
   const isVisible = !isDismissed && (showIosInstructions || deferredPrompt !== null)
@@ -81,7 +94,7 @@ export function PwaInstallPrompt() {
         </div>
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
-        {deferredPrompt ? <Button type="button" onClick={() => void install()}>Установить</Button> : null}
+        {deferredPrompt ? <Button type="button" onClick={() => void install()} disabled={isInstalling}>Установить</Button> : null}
         <Button type="button" variant="ghost" onClick={chooseLater}>{showIosInstructions ? 'Понятно' : 'Позже'}</Button>
       </div>
     </section>
