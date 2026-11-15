@@ -39,6 +39,7 @@ export function PwaInstallPrompt() {
   const [isDismissed, setIsDismissed] = useState(hasDismissedPrompt)
   const [isInstalling, setIsInstalling] = useState(false)
   const isInstallingRef = useRef(false)
+  const isInstalledRef = useRef(false)
   const showIosInstructions = !isDismissed && !isStandalone() && isIos()
 
   useEffect(() => {
@@ -48,9 +49,19 @@ export function PwaInstallPrompt() {
       event.preventDefault()
       setDeferredPrompt(event as DeferredInstallEvent)
     }
+    const onAppInstalled = () => {
+      isInstalledRef.current = true
+      dismissPrompt()
+      setDeferredPrompt(null)
+      setIsDismissed(true)
+    }
 
     window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt)
-    return () => window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt)
+    window.addEventListener('appinstalled', onAppInstalled)
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt)
+      window.removeEventListener('appinstalled', onAppInstalled)
+    }
   }, [isDismissed])
 
   const chooseLater = () => {
@@ -71,6 +82,7 @@ export function PwaInstallPrompt() {
       await prompt.userChoice
       chooseLater()
     } catch {
+      if (isInstalledRef.current) return
       isInstallingRef.current = false
       setIsInstalling(false)
       setDeferredPrompt(prompt)

@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -55,6 +55,20 @@ describe('PwaInstallPrompt', () => {
     fireEvent.click(installButton)
 
     expect(prompt).toHaveBeenCalledOnce()
+  })
+
+  it('hides the browser install action after the app is installed from browser UI', async () => {
+    const event = Object.assign(new Event('beforeinstallprompt', { cancelable: true }), {
+      prompt: vi.fn().mockResolvedValue(undefined),
+      userChoice: Promise.resolve({ outcome: 'dismissed' as const }),
+    }) as DeferredInstallEvent
+    render(<PwaInstallPrompt />)
+    window.dispatchEvent(event)
+    await screen.findByRole('button', { name: 'Установить' })
+
+    window.dispatchEvent(new Event('appinstalled'))
+
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'Установить' })).not.toBeInTheDocument())
   })
 
   it('explains installation on iPhone when the app is not standalone', async () => {
