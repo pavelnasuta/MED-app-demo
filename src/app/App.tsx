@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
 
+import { PwaInstallPrompt } from '../components/pwa-install-prompt'
 import { PwaUpdateNotice } from '../components/pwa-update-notice'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
 import { GalleryPage } from '../features/gallery/GalleryPage'
@@ -90,5 +91,5 @@ export function App() {
 
   const page = activeRoute === 'gallery' ? <GalleryPage /> : activeRoute === 'ideas' ? <IdeasPage /> : <HomePage />
 
-  return <><OfflineStatus /><AppShell activeRoute={activeRoute} onNavigate={navigate}>{page}</AppShell><PwaUpdateNotice /><Toaster richColors position="top-center" closeButton /></>
+  return <><OfflineStatus /><PwaInstallPrompt /><AppShell activeRoute={activeRoute} onNavigate={navigate}>{page}</AppShell><PwaUpdateNotice /><Toaster richColors position="top-center" closeButton /></>
 }
