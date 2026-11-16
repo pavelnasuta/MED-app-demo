@@ -27,8 +27,8 @@ export default defineConfig({
         'icons/icon-maskable-512.png',
       ],
       manifest: {
-        name: 'MVP PWA Starter',
-        short_name: 'MVP Starter',
+        name: 'SkinCheck',
+        short_name: 'SkinCheck',
         start_url: base,
         scope: base,
         display: 'standalone',

@@ -1,4 +1,4 @@
-export type RouteName = 'home' | 'ideas' | 'gallery'
+export type RouteName = 'home' | 'check' | 'history' | 'methods'
 
 export type AppRoute = {
   name: RouteName
@@ -7,6 +7,7 @@ export type AppRoute = {
 
 export const appRoutes: AppRoute[] = [
   { name: 'home', label: 'Главная' },
-  { name: 'ideas', label: 'Идеи' },
-  { name: 'gallery', label: 'Галерея' },
+  { name: 'check', label: 'Проверка' },
+  { name: 'history', label: 'История' },
+  { name: 'methods', label: 'Методики' },
 ]
