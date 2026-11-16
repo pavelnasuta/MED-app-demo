@@ -4,6 +4,7 @@ import { Toaster } from 'sonner'
 import { PwaInstallPrompt } from '../components/pwa-install-prompt'
 import { PwaUpdateNotice } from '../components/pwa-update-notice'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
+import { SkinCheckFlow } from '../features/skincheck/SkinCheckFlow'
 import { SkinCheckStartPage } from '../features/skincheck/SkinCheckStartPage'
 import { usePreferencesStore } from '../stores/preferences-store'
 import { AppShell } from './layouts/AppShell'
@@ -38,6 +39,6 @@ export function App() {
   useAppliedTheme()
   useEffect(() => { const syncRoute = () => setActiveRoute(routeFromHash()); window.addEventListener('hashchange', syncRoute); return () => window.removeEventListener('hashchange', syncRoute) }, [])
   const navigate = (route: RouteName) => { window.location.hash = route; setActiveRoute(route) }
-  const page = activeRoute === 'check' ? <NextStagePage title="Проверка новообразования" description="Последовательный опрос появится на следующем этапе." /> : activeRoute === 'history' ? <NextStagePage title="История проверок" description="Локальное сохранение результатов появится на четвёртом этапе." /> : activeRoute === 'methods' ? <NextStagePage title="О методиках" description="Краткий справочник ABCDE, 7-point checklist и ограничений появится на четвёртом этапе." /> : <SkinCheckStartPage onStart={() => navigate('check')} onShowHistory={() => navigate('history')} onShowMethods={() => navigate('methods')} />
+  const page = activeRoute === 'check' ? <SkinCheckFlow /> : activeRoute === 'history' ? <NextStagePage title="История проверок" description="Локальное сохранение результатов появится на четвёртом этапе." /> : activeRoute === 'methods' ? <NextStagePage title="О методиках" description="Краткий справочник ABCDE, 7-point checklist и ограничений появится на четвёртом этапе." /> : <SkinCheckStartPage onStart={() => navigate('check')} onShowHistory={() => navigate('history')} onShowMethods={() => navigate('methods')} />
   return <><OfflineStatus /><PwaInstallPrompt /><AppShell activeRoute={activeRoute} onNavigate={navigate}>{page}</AppShell><PwaUpdateNotice /><Toaster richColors position="top-center" closeButton /></>
 }

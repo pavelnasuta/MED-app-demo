@@ -11,6 +11,18 @@ export const FACE_LOCATIONS = [
 ] as const
 
 export type FaceLocation = (typeof FACE_LOCATIONS)[number]
+
+export const FACE_LOCATION_LABELS: Record<FaceLocation, string> = {
+  forehead: 'Лоб',
+  temple: 'Висок',
+  cheek: 'Щека',
+  nose: 'Нос',
+  'eye-area': 'Область вокруг глаза',
+  chin: 'Подбородок',
+  'lip-area': 'Область вокруг губ',
+  ear: 'Ухо',
+  'other-face-area': 'Другая область лица',
+}
 export type YesNoUnknown = 'yes' | 'no' | 'unknown'
 export type Appearance = 'flat-spot' | 'raised-mole' | 'firm-nodule' | 'reddish-lesion' | 'non-healing-sore' | 'other'
 export type LesionColour = 'flesh' | 'light-brown' | 'dark-brown-black' | 'red-pink' | 'multiple-colours' | 'other'
